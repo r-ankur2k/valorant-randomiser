@@ -14,6 +14,17 @@ document.addEventListener('DOMContentLoaded', () => {
         excludedIds: new Set(),
         history: [],
 
+        // Recent History Buffer for 4-Spin Anti-Repeat Engine
+        recentHistory: {
+            agents: [],
+            weapons: [],
+            challenges: [],
+            primaryWeapons: [],
+            sidearms: [],
+            armor: [],
+            team: []
+        },
+
         // Wheel Physics
         wheelAngle: 0,
         wheelVelocity: 0,
@@ -108,6 +119,44 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalOverlay = document.getElementById('modalOverlay');
     const modalContent = document.getElementById('modalContent');
     const modalClose = document.getElementById('modalClose');
+
+    // --- NON-REPEAT RANDOM SELECTION ENGINE ---
+    // Excludes items selected within the last memoryLimit (4) spins per category
+    function pickRandomNonRepeat(items, poolKey = 'general', memoryLimit = 4) {
+        if (!items || items.length === 0) return null;
+        if (items.length === 1) return items[0];
+
+        if (!state.recentHistory[poolKey]) {
+            state.recentHistory[poolKey] = [];
+        }
+
+        const recentList = state.recentHistory[poolKey];
+
+        // Gracefully handle small pools by gradually reducing memory limit if needed
+        let effectiveLimit = Math.min(memoryLimit, items.length - 1);
+        let candidates = [];
+
+        while (effectiveLimit >= 0) {
+            const recentSubList = recentList.slice(Math.max(0, recentList.length - effectiveLimit));
+            candidates = items.filter(item => !recentSubList.includes(item.id));
+            if (candidates.length > 0) break;
+            effectiveLimit--;
+        }
+
+        if (candidates.length === 0) {
+            candidates = items;
+        }
+
+        const selected = candidates[Math.floor(Math.random() * candidates.length)];
+
+        // Record in recent history queue
+        recentList.push(selected.id);
+        if (recentList.length > memoryLimit) {
+            recentList.shift();
+        }
+
+        return selected;
+    }
 
     // --- DATA HELPER FUNCTIONS ---
     function getActiveItems() {
@@ -239,10 +288,32 @@ document.addEventListener('DOMContentLoaded', () => {
         state.isSpinning = true;
         spinBtn.disabled = true;
 
+        // Select winner using 4-spin anti-repeat randomizer engine
+        const winner = pickRandomNonRepeat(items, state.currentTab, 4);
+
         if (state.spinMode === 'wheel') {
-            const targetRotation = Math.PI * 2 * (5 + Math.random() * 5); // 5-10 full spins
-            const randomOffset = Math.random() * Math.PI * 2;
-            const totalDistance = targetRotation + randomOffset;
+            const winningIndex = items.findIndex(item => item.id === winner.id);
+            const sliceAngle = (2 * Math.PI) / items.length;
+
+            // Pointer is at top center (3 * Math.PI / 2).
+            // Calculate target final angle so pointer lands on center of winning slice.
+            const targetFinalAngle = (3 * Math.PI / 2) - (winningIndex + 0.5) * sliceAngle;
+
+            // Normalize current wheel angle to [0, 2*PI)
+            let currentAngle = state.wheelAngle % (2 * Math.PI);
+            if (currentAngle < 0) currentAngle += 2 * Math.PI;
+
+            // Calculate rotation needed to reach target final angle modulo 2*PI
+            let finalNormalized = targetFinalAngle % (2 * Math.PI);
+            if (finalNormalized < 0) finalNormalized += 2 * Math.PI;
+
+            let delta = finalNormalized - currentAngle;
+            if (delta <= 0) delta += 2 * Math.PI;
+
+            // 5 to 8 full spins before landing
+            const fullSpins = (5 + Math.floor(Math.random() * 4)) * 2 * Math.PI;
+            const totalDistance = fullSpins + delta;
+            const startAngle = state.wheelAngle;
             let currentDistance = 0;
             const duration = 4500; // ms
             const startTime = performance.now();
@@ -257,11 +328,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const easeOut = 1 - Math.pow(1 - progress, 5);
                 const currentAngleOffset = totalDistance * easeOut;
 
-                state.wheelAngle = (state.wheelAngle + (currentAngleOffset - currentDistance)) % (Math.PI * 2);
+                state.wheelAngle = startAngle + currentAngleOffset;
                 currentDistance = currentAngleOffset;
 
                 // Detect Pointer Edge Crossing for Sound Ticks
-                const sliceAngle = (2 * Math.PI) / items.length;
                 const currentSliceIndex = Math.floor((2 * Math.PI - (state.wheelAngle % (2 * Math.PI))) / sliceAngle) % items.length;
                 const lastSliceIndex = Math.floor((2 * Math.PI - (state.lastTickAngle % (2 * Math.PI))) / sliceAngle) % items.length;
 
@@ -283,13 +353,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     state.isSpinning = false;
                     spinBtn.disabled = false;
 
-                    const pointerAngle = (3 * Math.PI / 2);
-                    let normalizedAngle = (pointerAngle - state.wheelAngle) % (2 * Math.PI);
-                    if (normalizedAngle < 0) normalizedAngle += 2 * Math.PI;
-
-                    const winningIndex = Math.floor(normalizedAngle / sliceAngle) % items.length;
-                    const winner = items[winningIndex];
-
                     soundManager.playWin();
                     displayResult(winner);
                     addToHistory(winner);
@@ -298,13 +361,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             requestAnimationFrame(animateWheel);
         } else {
-            spinSlotReel(items);
+            spinSlotReel(items, winner);
         }
     }
 
-    function spinSlotReel(items) {
+    function spinSlotReel(items, preSelectedWinner) {
         slotReel.innerHTML = '';
-        const winner = items[Math.floor(Math.random() * items.length)];
+        const winner = preSelectedWinner || pickRandomNonRepeat(items, state.currentTab, 4);
 
         // Generate 30 reel cards ending on winner
         for (let i = 0; i < 30; i++) {
@@ -410,13 +473,15 @@ document.addEventListener('DOMContentLoaded', () => {
         soundManager.init();
         soundManager.playTick();
 
-        const agent = VALORANT_AGENTS[Math.floor(Math.random() * VALORANT_AGENTS.length)];
-        const sidearms = VALORANT_WEAPONS.filter(w => w.category === 'Sidearms');
-        const primaryWeapons = VALORANT_WEAPONS.filter(w => w.category !== 'Sidearms' && w.category !== 'Melee');
-        const armor = VALORANT_ARMOR[Math.floor(Math.random() * VALORANT_ARMOR.length)];
+        const activeAgents = VALORANT_AGENTS.filter(a => !state.excludedIds.has(a.id));
+        const sidearms = VALORANT_WEAPONS.filter(w => w.category === 'Sidearms' && !state.excludedIds.has(w.id));
+        const primaryWeapons = VALORANT_WEAPONS.filter(w => w.category !== 'Sidearms' && w.category !== 'Melee' && !state.excludedIds.has(w.id));
+        const armorList = VALORANT_ARMOR.filter(a => !state.excludedIds.has(a.id));
 
-        const sidearm = sidearms[Math.floor(Math.random() * sidearms.length)];
-        const primary = primaryWeapons[Math.floor(Math.random() * primaryWeapons.length)];
+        const agent = pickRandomNonRepeat(activeAgents, 'agents', 4);
+        const primary = pickRandomNonRepeat(primaryWeapons, 'primaryWeapons', 4);
+        const sidearm = pickRandomNonRepeat(sidearms, 'sidearms', 4);
+        const armor = pickRandomNonRepeat(armorList, 'armor', 4);
 
         let ticks = 0;
         const interval = setInterval(() => {
@@ -465,8 +530,18 @@ document.addEventListener('DOMContentLoaded', () => {
         soundManager.init();
         soundManager.playTick();
 
-        const shuffled = [...VALORANT_AGENTS].sort(() => 0.5 - Math.random());
-        const team = shuffled.slice(0, 5);
+        const activeAgents = VALORANT_AGENTS.filter(a => !state.excludedIds.has(a.id));
+        const team = [];
+        const usedInTeam = new Set();
+
+        for (let p = 0; p < 5; p++) {
+            const pool = activeAgents.filter(a => !usedInTeam.has(a.id));
+            const picked = pickRandomNonRepeat(pool, 'team', 4);
+            if (picked) {
+                team.push(picked);
+                usedInTeam.add(picked.id);
+            }
+        }
 
         let ticks = 0;
         const interval = setInterval(() => {

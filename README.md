@@ -11,6 +11,7 @@ A tactical Web Application for Valorant players featuring interactive Spin Wheel
 - **🔊 Synthesized SFX**: Built-in Web Audio API sound effects for wheel tick sounds, spin deceleration, and victory fanfares with toggle control.
 - **🎡 Dual Spin Modes**: Switch between standard 360° Canvas Spin Wheel and 🎰 Slot Machine Reel.
 - **⚙️ Filter Pool / Exclude**: Exclude agents or weapons you don't own or don't want to spin.
+- **⚡ 4-Spin Anti-Repeat Engine**: Smart randomizer memory that prevents the same Agent, Weapon, Challenge, Shield, or Squad member from appearing again for 4 consecutive spins (with dynamic pool size fallback).
 - **📜 Spin History**: Track recent spins with clear history options.
 
 ## 🛠️ Tech Stack
