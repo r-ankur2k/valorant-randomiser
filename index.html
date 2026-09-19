@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Valorant Randomiser</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Teko:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="app-wrapper">
+
+    <!-- HEADER HUD -->
+    <header class="header-hud">
+      <div class="brand-container">
+        <div class="brand-logo-icon">
+          <svg viewBox="0 0 100 100">
+            <path d="M 10,15 L 35,85 L 50,85 L 25,15 Z" />
+            <path d="M 65,15 L 90,85 L 75,85 L 50,15 Z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="brand-title">VALORANT <span class="text-red">RANDOMISER</span></h1>
+          <div class="brand-sub">AGENT, WEAPON & CHALLENGE ROULETTE</div>
+        </div>
+      </div>
+
+      <div class="hud-actions">
+        <button id="soundToggle" class="hud-btn active">🔊 SFX ON</button>
+        <button id="modeToggle" class="hud-btn">🎡 WHEEL MODE</button>
+        <button id="excludeBtn" class="hud-btn">⚙️ FILTER POOL</button>
+      </div>
+    </header>
+
+    <!-- TAB NAVIGATION -->
+    <nav class="tab-navigation">
+      <button class="nav-tab active" data-tab="agents">
+        <span>🎯</span> AGENT SPIN
+      </button>
+      <button class="nav-tab" data-tab="weapons">
+        <span>🔫</span> WEAPON SPIN
+      </button>
+      <button class="nav-tab" data-tab="challenges">
+        <span>⚡</span> CHALLENGES
+      </button>
+      <button class="nav-tab" data-tab="loadout">
+        <span>🎲</span> FULL LOADOUT
+      </button>
+      <button class="nav-tab" data-tab="team">
+        <span>👥</span> 5-STACK SQUAD
+      </button>
+    </nav>
+
+    <!-- MAIN GRID AREA -->
+    <main class="main-grid">
+
+      <!-- SPINNER MAIN CONTAINER -->
+      <section class="spinner-container-card">
+
+        <!-- FILTER BAR -->
+        <div id="filterContainer" class="filter-bar">
+          <!-- Filter chips dynamically injected here -->
+        </div>
+
+        <!-- CANVAS WHEEL STAGE -->
+        <div id="wheelStage" class="wheel-stage">
+          <div class="wheel-pointer"></div>
+          <canvas id="wheelCanvas" width="440" height="440"></canvas>
+          <div class="wheel-center-cap" title="Click to Spin">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2L15 8L22 9L17 14 L18.5 21L12 17.5L5.5 21L7 14L2 9L9 8Z" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- SLOT REEL STAGE (Alternative View) -->
+        <div id="slotStage" class="slot-stage hidden">
+          <div class="slot-overlay-line"></div>
+          <div id="slotReel" class="slot-reel-strip">
+            <div class="slot-card">
+              <div class="slot-card-name">PRESS SPIN</div>
+              <div class="slot-card-role">SLOT ROULETTE</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LOADOUT GRID STAGE -->
+        <div id="loadoutGrid" class="loadout-grid hidden">
+          <div class="loadout-card">
+            <div class="loadout-card-tag">AGENT</div>
+            <div class="loadout-card-title">READY</div>
+            <div class="loadout-card-desc">Click spin to generate loadout</div>
+          </div>
+          <div class="loadout-card">
+            <div class="loadout-card-tag">PRIMARY WEAPON</div>
+            <div class="loadout-card-title">READY</div>
+            <div class="loadout-card-desc">Click spin to generate loadout</div>
+          </div>
+          <div class="loadout-card">
+            <div class="loadout-card-tag">SIDEARM</div>
+            <div class="loadout-card-title">READY</div>
+            <div class="loadout-card-desc">Click spin to generate loadout</div>
+          </div>
+          <div class="loadout-card">
+            <div class="loadout-card-tag text-gold">SHIELD / ARMOR</div>
+            <div class="loadout-card-title text-gold">READY</div>
+            <div class="loadout-card-desc">Click spin to generate loadout</div>
+          </div>
+        </div>
+
+        <!-- TEAM GRID STAGE -->
+        <div id="teamGrid" class="team-stack-grid hidden">
+          <div class="team-member-card">
+            <div class="team-player-label">PLAYER 1</div>
+            <div class="team-agent-name">???</div>
+          </div>
+          <div class="team-member-card">
+            <div class="team-player-label">PLAYER 2</div>
+            <div class="team-agent-name">???</div>
+          </div>
+          <div class="team-member-card">
+            <div class="team-player-label">PLAYER 3</div>
+            <div class="team-agent-name">???</div>
+          </div>
+          <div class="team-member-card">
+            <div class="team-player-label">PLAYER 4</div>
+            <div class="team-agent-name">???</div>
+          </div>
+          <div class="team-member-card">
+            <div class="team-player-label">PLAYER 5</div>
+            <div class="team-agent-name">???</div>
+          </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="spin-controls">
+          <button id="spinBtn" class="btn-spin-main">
+            <span>⚡ SPIN SELECTION</span>
+          </button>
+        </div>
+
+      </section>
+
+      <!-- SIDEBAR PANEL -->
+      <aside class="sidebar-panel">
+
+        <!-- RESULT CARD -->
+        <div class="card-panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span>🏆</span> REVEAL <span class="panel-title-accent">RESULT</span>
+            </div>
+          </div>
+          <div id="resultDisplay" class="result-display">
+            <div class="result-badge">
+              <span style="font-family: var(--font-display); font-size: 2.2rem; color: var(--color-val-red)">VAL</span>
+            </div>
+            <div class="result-title">READY TO SPIN</div>
+            <div class="result-placeholder">Press the spin button to select a random Agent, Weapon, or Challenge!</div>
+          </div>
+        </div>
+
+        <!-- HISTORY FEED -->
+        <div class="card-panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span>📜</span> SPIN <span class="panel-title-accent">HISTORY</span>
+            </div>
+            <button id="clearHistoryBtn" class="btn-secondary" style="padding: 4px 10px; font-size: 0.75rem;">CLEAR</button>
+          </div>
+          <div id="historyList" class="history-list">
+            <div class="history-item">
+              <span class="history-item-name">No spins recorded</span>
+              <span class="history-item-tag">---</span>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+
+    </main>
+
+  </div>
+
+  <!-- EXCLUDE POOL MODAL -->
+  <div id="modalOverlay" class="modal-overlay">
+    <div class="modal-box">
+      <div id="modalContent"></div>
+      <div style="display: flex; justify-content: flex-end; margin-top: 18px;">
+        <button id="modalClose" class="btn-spin-main" style="font-size: 1.3rem; padding: 6px 20px;">DONE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
