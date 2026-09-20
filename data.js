@@ -530,39 +530,20 @@ const VALORANT_ARMOR = [
 ];
 
 const STRAT_CHALLENGES = [
-    // Economy
-    { id: 'c1', name: 'Eco King', type: 'Economy', desc: 'You can only purchase Sidearms for the entire game.', color: '#E2B659' },
-    { id: 'c9', name: 'Pistol Hero', type: 'Economy', desc: 'Play the entire match using only Ghost or Sheriff.', color: '#E2B659' },
-    { id: 'c13', name: 'Zero Credit Run', type: 'Economy', desc: 'Spend $0 at the buy menu. Use default Classic and scavenge guns off dead players!', color: '#E2B659' },
-    { id: 'c14', name: 'Sugar Daddy', type: 'Economy', desc: 'Buy full weapons for your teammates before buying anything for yourself.', color: '#E2B659' },
-
-    // Combat
-    { id: 'c2', name: 'Glass Cannon', type: 'Combat', desc: 'Buy the most expensive weapon possible, but NO armor!', color: '#FF4655' },
-    { id: 'c6', name: 'Crouch Demon', type: 'Combat', desc: 'You must crouch the moment you start shooting.', color: '#FF4655' },
-    { id: 'c11', name: 'Spray & Pray', type: 'Combat', desc: 'Unload full magazines whenever an enemy appears. Reloading early is forbidden!', color: '#FF4655' },
-    { id: 'c15', name: 'No Reload Challenge', type: 'Combat', desc: 'Never press reload! You can only fire until empty or swap to your secondary.', color: '#FF4655' },
-    { id: 'c16', name: 'Hipfire Only', type: 'Combat', desc: 'Right-click ADS is completely banned. All kills must be hipfire.', color: '#FF4655' },
-    { id: 'c17', name: 'Melee Assassin', type: 'Combat', desc: 'You must get at least 1 Knife kill or stab attempt per half.', color: '#FF4655' },
-
-    // Movement
-    { id: 'c3', name: 'Running & Gunning', type: 'Movement', desc: 'You must stay in motion while firing every weapon.', color: '#36B5FF' },
-    { id: 'c5', name: 'W-Key Gaming', type: 'Movement', desc: 'Never stop holding W during gunfights. Backward S-key is banned!', color: '#36B5FF' },
-    { id: 'c18', name: 'Jump Peek Freak', type: 'Movement', desc: 'You must jump peek every angle before entering a gunfight.', color: '#36B5FF' },
-    { id: 'c19', name: 'Stealth Ninja Walk', type: 'Movement', desc: 'Hold Shift to walk the entire round. Loud footsteps are forbidden!', color: '#36B5FF' },
-
-    // Ability
-    { id: 'c4', name: 'No Ability Run', type: 'Ability', desc: 'No purchasing or using non-signature abilities.', color: '#9055FF' },
-    { id: 'c20', name: 'Full Utility Drain', type: 'Ability', desc: 'You must deploy all abilities within the first 30 seconds of the round.', color: '#9055FF' },
-    { id: 'c21', name: 'Ultimate Orb Rush', type: 'Ability', desc: 'Prioritize collecting ultimate orbs on the map before fighting.', color: '#9055FF' },
-
-    // Precision
-    { id: 'c7', name: 'One Tap Only', type: 'Precision', desc: 'No full-auto bursts allowed. Only single tap headshots!', color: '#46E6A3' },
-    { id: 'c12', name: 'Sniper Duelist', type: 'Precision', desc: 'Only use Marshal, Outlaw, or Operator as your primary.', color: '#46E6A3' },
-    { id: 'c22', name: 'Headshot Only Guardian', type: 'Precision', desc: 'Buy Guardian only. Body shot kills do not count!', color: '#46E6A3' },
-
-    // Tactical & Objective
-    { id: 'c8', name: 'Ninja Defuse', type: 'Tactical', desc: 'Prioritize hidden defuses over killing the last enemies.', color: '#E2B659' },
-    { id: 'c10', name: 'No Comms Stealth', type: 'Tactical', desc: 'Rely purely on radar and pings without voice comms.', color: '#9055FF' },
-    { id: 'c23', name: 'VIP Protect', type: 'Tactical', desc: 'Nominate 1 player as VIP. If they die, your squad must drop their weapons.', color: '#E2B659' },
-    { id: 'c24', name: 'Site Rush Roulette', type: 'Tactical', desc: 'Rush A or B immediately without waiting or holding default.', color: '#FF4655' }
+    // Tactical & Fun Strats
+    { id: 'c1', name: 'Sheriff Only', type: 'Economy', desc: 'Buy a Sheriff and click heads. No main rifles allowed!', color: '#E2B659' },
+    { id: 'c2', name: 'Shotgun Party', type: 'Tactical', desc: 'Whole team buys Judge or Bucky and holds tight corners together.', color: '#FF4655' },
+    { id: 'c3', name: 'Ghost Protocol', type: 'Economy', desc: 'Silenced weapons only! Use Ghost, Spectre, or Phantom.', color: '#E2B659' },
+    { id: 'c4', name: 'Wallbang Warlords', type: 'Combat', desc: 'Buy Odin or Ares and spam every wall and smoke in sight!', color: '#FF4655' },
+    { id: 'c5', name: 'Stinger Run & Gun', type: 'Combat', desc: 'Buy a Stinger, hold W, and never stop sprinting while shooting.', color: '#36B5FF' },
+    { id: 'c6', name: 'Marshal One-Tap', type: 'Precision', desc: 'Lightweight sniper duty: Marshal only, aim for the head!', color: '#46E6A3' },
+    { id: 'c7', name: 'The Scavenger', type: 'Economy', desc: 'Start with Classic ($0 buy). Steal guns off enemy bodies to upgrade!', color: '#E2B659' },
+    { id: 'c8', name: 'Protect the VIP', type: 'Tactical', desc: 'Pick 1 player as the President. Everyone shields them at all costs!', color: '#9055FF' },
+    { id: 'c9', name: 'Buddy System', type: 'Tactical', desc: 'Pair up with a teammate. You must stay within 5 meters of your buddy all round.', color: '#9055FF' },
+    { id: 'c10', name: 'Full Site Rush', type: 'Movement', desc: '3... 2... 1... Hard rush one site together without stopping!', color: '#36B5FF' },
+    { id: 'c11', name: 'No Reloading', type: 'Combat', desc: 'No pressing R! Use your magazine, then swap to sidearm when empty.', color: '#FF4655' },
+    { id: 'c12', name: 'Sniper Squad', type: 'Precision', desc: 'Everyone buys a Sniper (Marshal, Outlaw, or Operator). Hold long angles!', color: '#46E6A3' },
+    { id: 'c13', name: 'Utility Dump', type: 'Ability', desc: 'Unload all your abilities onto site within 15 seconds of round start.', color: '#9055FF' },
+    { id: 'c14', name: 'Glass Cannon', type: 'Economy', desc: 'Buy the biggest gun you can afford, but 0 armor allowed!', color: '#FF4655' },
+    { id: 'c15', name: 'Guardian Headshot Machine', type: 'Precision', desc: 'Buy Guardian only. Clean 1-taps only!', color: '#46E6A3' }
 ];

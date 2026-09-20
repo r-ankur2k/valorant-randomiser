@@ -6,22 +6,20 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- STATE MANAGEMENT ---
     const state = {
-        currentTab: 'agents', // 'agents' | 'weapons' | 'challenges' | 'loadout' | 'team'
+        currentTab: 'agents', // 'agents' | 'weapons' | 'challenges' | 'team'
         spinMode: 'wheel', // 'wheel' | 'slot'
         activeFilter: 'all',
         soundEnabled: true,
         isSpinning: false,
         excludedIds: new Set(),
         history: [],
+        squadSize: 5,
 
         // Recent History Buffer for 4-Spin Anti-Repeat Engine
         recentHistory: {
             agents: [],
             weapons: [],
             challenges: [],
-            primaryWeapons: [],
-            sidearms: [],
-            armor: [],
             team: []
         },
 
@@ -104,18 +102,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const ctx = canvas ? canvas.getContext('2d') : null;
     const spinBtn = document.getElementById('spinBtn');
     const soundToggleBtn = document.getElementById('soundToggle');
-    const modeToggleBtn = document.getElementById('modeToggle');
     const excludeBtn = document.getElementById('excludeBtn');
     const filterContainer = document.getElementById('filterContainer');
     const tabBtns = document.querySelectorAll('.nav-tab');
     const wheelStage = document.getElementById('wheelStage');
-    const slotStage = document.getElementById('slotStage');
-    const slotReel = document.getElementById('slotReel');
     const resultDisplay = document.getElementById('resultDisplay');
     const historyList = document.getElementById('historyList');
     const clearHistoryBtn = document.getElementById('clearHistoryBtn');
-    const loadoutGrid = document.getElementById('loadoutGrid');
     const teamGrid = document.getElementById('teamGrid');
+    const teamCardsGrid = document.getElementById('teamCardsGrid');
+    const squadSizeBtns = document.querySelectorAll('.squad-size-btn');
     const modalOverlay = document.getElementById('modalOverlay');
     const modalContent = document.getElementById('modalContent');
     const modalClose = document.getElementById('modalClose');
@@ -291,116 +287,74 @@ document.addEventListener('DOMContentLoaded', () => {
         // Select winner using 4-spin anti-repeat randomizer engine
         const winner = pickRandomNonRepeat(items, state.currentTab, 4);
 
-        if (state.spinMode === 'wheel') {
-            const winningIndex = items.findIndex(item => item.id === winner.id);
-            const sliceAngle = (2 * Math.PI) / items.length;
+        const winningIndex = items.findIndex(item => item.id === winner.id);
+        const sliceAngle = (2 * Math.PI) / items.length;
 
-            // Pointer is at top center (3 * Math.PI / 2).
-            // Calculate target final angle so pointer lands on center of winning slice.
-            const targetFinalAngle = (3 * Math.PI / 2) - (winningIndex + 0.5) * sliceAngle;
+        // Pointer is at top center (3 * Math.PI / 2).
+        // Calculate target final angle so pointer lands on center of winning slice.
+        const targetFinalAngle = (3 * Math.PI / 2) - (winningIndex + 0.5) * sliceAngle;
 
-            // Normalize current wheel angle to [0, 2*PI)
-            let currentAngle = state.wheelAngle % (2 * Math.PI);
-            if (currentAngle < 0) currentAngle += 2 * Math.PI;
+        // Normalize current wheel angle to [0, 2*PI)
+        let currentAngle = state.wheelAngle % (2 * Math.PI);
+        if (currentAngle < 0) currentAngle += 2 * Math.PI;
 
-            // Calculate rotation needed to reach target final angle modulo 2*PI
-            let finalNormalized = targetFinalAngle % (2 * Math.PI);
-            if (finalNormalized < 0) finalNormalized += 2 * Math.PI;
+        // Calculate rotation needed to reach target final angle modulo 2*PI
+        let finalNormalized = targetFinalAngle % (2 * Math.PI);
+        if (finalNormalized < 0) finalNormalized += 2 * Math.PI;
 
-            let delta = finalNormalized - currentAngle;
-            if (delta <= 0) delta += 2 * Math.PI;
+        let delta = finalNormalized - currentAngle;
+        if (delta <= 0) delta += 2 * Math.PI;
 
-            // 5 to 8 full spins before landing
-            const fullSpins = (5 + Math.floor(Math.random() * 4)) * 2 * Math.PI;
-            const totalDistance = fullSpins + delta;
-            const startAngle = state.wheelAngle;
-            let currentDistance = 0;
-            const duration = 4500; // ms
-            const startTime = performance.now();
+        // 5 to 8 full spins before landing
+        const fullSpins = (5 + Math.floor(Math.random() * 4)) * 2 * Math.PI;
+        const totalDistance = fullSpins + delta;
+        const startAngle = state.wheelAngle;
+        let currentDistance = 0;
+        const duration = 4500; // ms
+        const startTime = performance.now();
 
-            state.lastTickAngle = state.wheelAngle;
+        state.lastTickAngle = state.wheelAngle;
 
-            function animateWheel(now) {
-                const elapsed = now - startTime;
-                const progress = Math.min(elapsed / duration, 1);
+        function animateWheel(now) {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
 
-                // Ease out quintic for dramatic slowing
-                const easeOut = 1 - Math.pow(1 - progress, 5);
-                const currentAngleOffset = totalDistance * easeOut;
+            // Ease out quintic for dramatic slowing
+            const easeOut = 1 - Math.pow(1 - progress, 5);
+            const currentAngleOffset = totalDistance * easeOut;
 
-                state.wheelAngle = startAngle + currentAngleOffset;
-                currentDistance = currentAngleOffset;
+            state.wheelAngle = startAngle + currentAngleOffset;
+            currentDistance = currentAngleOffset;
 
-                // Detect Pointer Edge Crossing for Sound Ticks
-                const currentSliceIndex = Math.floor((2 * Math.PI - (state.wheelAngle % (2 * Math.PI))) / sliceAngle) % items.length;
-                const lastSliceIndex = Math.floor((2 * Math.PI - (state.lastTickAngle % (2 * Math.PI))) / sliceAngle) % items.length;
+            // Detect Pointer Edge Crossing for Sound Ticks
+            const currentSliceIndex = Math.floor((2 * Math.PI - (state.wheelAngle % (2 * Math.PI))) / sliceAngle) % items.length;
+            const lastSliceIndex = Math.floor((2 * Math.PI - (state.lastTickAngle % (2 * Math.PI))) / sliceAngle) % items.length;
 
-                if (currentSliceIndex !== lastSliceIndex) {
-                    soundManager.playTick();
-                    const pointer = document.querySelector('.wheel-pointer');
-                    if (pointer) {
-                        pointer.classList.add('tick');
-                        setTimeout(() => pointer.classList.remove('tick'), 40);
-                    }
-                }
-                state.lastTickAngle = state.wheelAngle;
-
-                drawWheel();
-
-                if (progress < 1) {
-                    state.animFrameId = requestAnimationFrame(animateWheel);
-                } else {
-                    state.isSpinning = false;
-                    spinBtn.disabled = false;
-
-                    soundManager.playWin();
-                    displayResult(winner);
-                    addToHistory(winner);
+            if (currentSliceIndex !== lastSliceIndex) {
+                soundManager.playTick();
+                const pointer = document.querySelector('.wheel-pointer');
+                if (pointer) {
+                    pointer.classList.add('tick');
+                    setTimeout(() => pointer.classList.remove('tick'), 40);
                 }
             }
+            state.lastTickAngle = state.wheelAngle;
 
-            requestAnimationFrame(animateWheel);
-        } else {
-            spinSlotReel(items, winner);
-        }
-    }
+            drawWheel();
 
-    function spinSlotReel(items, preSelectedWinner) {
-        slotReel.innerHTML = '';
-        const winner = preSelectedWinner || pickRandomNonRepeat(items, state.currentTab, 4);
+            if (progress < 1) {
+                state.animFrameId = requestAnimationFrame(animateWheel);
+            } else {
+                state.isSpinning = false;
+                spinBtn.disabled = false;
 
-        // Generate 30 reel cards ending on winner
-        for (let i = 0; i < 30; i++) {
-            const item = (i === 28) ? winner : items[Math.floor(Math.random() * items.length)];
-            const card = document.createElement('div');
-            card.className = 'slot-card';
-            card.innerHTML = `
-                <div class="slot-card-name">${item.name}</div>
-                <div class="slot-card-role" style="color: ${item.color || '#E2B659'}">${item.role || item.category || item.type || ''}</div>
-            `;
-            slotReel.appendChild(card);
+                soundManager.playWin();
+                displayResult(winner);
+                addToHistory(winner);
+            }
         }
 
-        const cardHeight = 180;
-        const targetY = -(28 * cardHeight);
-        slotReel.style.transform = `translateY(0px)`;
-        slotReel.style.transition = 'none';
-
-        setTimeout(() => {
-            slotReel.style.transition = 'transform 3.8s cubic-bezier(0.15, 0.85, 0.35, 1)';
-            slotReel.style.transform = `translateY(${targetY}px)`;
-        }, 50);
-
-        let tickInterval = setInterval(() => soundManager.playTick(), 100);
-        setTimeout(() => { clearInterval(tickInterval); }, 3200);
-
-        setTimeout(() => {
-            state.isSpinning = false;
-            spinBtn.disabled = false;
-            soundManager.playWin();
-            displayResult(winner);
-            addToHistory(winner);
-        }, 3900);
+        requestAnimationFrame(animateWheel);
     }
 
     // --- DISPLAY WINNING RESULT ---
@@ -464,64 +418,34 @@ document.addEventListener('DOMContentLoaded', () => {
         resultDisplay.innerHTML = html;
     }
 
-    // --- SPIN FULL LOADOUT BUILDER (Agent + Primary + Sidearm + Armor) ---
-    function spinLoadout() {
-        if (state.isSpinning) return;
-        state.isSpinning = true;
-        spinBtn.disabled = true;
-
-        soundManager.init();
-        soundManager.playTick();
-
-        const activeAgents = VALORANT_AGENTS.filter(a => !state.excludedIds.has(a.id));
-        const sidearms = VALORANT_WEAPONS.filter(w => w.category === 'Sidearms' && !state.excludedIds.has(w.id));
-        const primaryWeapons = VALORANT_WEAPONS.filter(w => w.category !== 'Sidearms' && w.category !== 'Melee' && !state.excludedIds.has(w.id));
-        const armorList = VALORANT_ARMOR.filter(a => !state.excludedIds.has(a.id));
-
-        const agent = pickRandomNonRepeat(activeAgents, 'agents', 4);
-        const primary = pickRandomNonRepeat(primaryWeapons, 'primaryWeapons', 4);
-        const sidearm = pickRandomNonRepeat(sidearms, 'sidearms', 4);
-        const armor = pickRandomNonRepeat(armorList, 'armor', 4);
-
-        let ticks = 0;
-        const interval = setInterval(() => {
-            soundManager.playTick();
-            ticks++;
-            if (ticks > 15) {
-                clearInterval(interval);
-                state.isSpinning = false;
-                spinBtn.disabled = false;
-                soundManager.playWin();
-
-                loadoutGrid.innerHTML = `
-                    <div class="loadout-card">
-                        <div class="loadout-card-tag" style="color: ${agent.color}">AGENT</div>
-                        <div class="loadout-card-title">${agent.name}</div>
-                        <div class="loadout-card-desc">${agent.role}</div>
-                    </div>
-                    <div class="loadout-card">
-                        <div class="loadout-card-tag">PRIMARY WEAPON</div>
-                        <div class="loadout-card-title">${primary.name}</div>
-                        <div class="loadout-card-desc">${primary.category} (${primary.cost} Creds)</div>
-                    </div>
-                    <div class="loadout-card">
-                        <div class="loadout-card-tag">SIDEARM</div>
-                        <div class="loadout-card-title">${sidearm.name}</div>
-                        <div class="loadout-card-desc">${sidearm.category} (${sidearm.cost} Creds)</div>
-                    </div>
-                    <div class="loadout-card">
-                        <div class="loadout-card-tag text-gold">SHIELD / ARMOR</div>
-                        <div class="loadout-card-title text-gold" style="font-size: 1.8rem;">${armor.name}</div>
-                        <div class="loadout-card-desc">${armor.desc}</div>
-                    </div>
-                `;
-
-                addToHistory({ name: `${agent.name} + ${primary.name} + ${armor.name}`, role: 'Full Loadout' });
-            }
-        }, 100);
+    // --- SQUAD SIZE SELECTOR & DEFAULT GRID RENDER ---
+    function renderDefaultTeamGrid() {
+        if (!teamCardsGrid) return;
+        const count = state.squadSize || 5;
+        const cards = [];
+        for (let i = 0; i < count; i++) {
+            cards.push(`
+                <div class="team-member-card">
+                    <div class="team-player-label">PLAYER ${i + 1}</div>
+                    <div class="team-agent-name">???</div>
+                </div>
+            `);
+        }
+        teamCardsGrid.innerHTML = cards.join('');
     }
 
-    // --- SPIN TEAM STACK BUILDER ---
+    squadSizeBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const size = parseInt(e.currentTarget.dataset.size, 10);
+            if (!size || state.isSpinning) return;
+            state.squadSize = size;
+            squadSizeBtns.forEach(b => b.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            renderDefaultTeamGrid();
+        });
+    });
+
+    // --- SPIN SQUAD STACK BUILDER ---
     function spinTeam() {
         if (state.isSpinning) return;
         state.isSpinning = true;
@@ -533,8 +457,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const activeAgents = VALORANT_AGENTS.filter(a => !state.excludedIds.has(a.id));
         const team = [];
         const usedInTeam = new Set();
+        const squadSize = state.squadSize || 5;
 
-        for (let p = 0; p < 5; p++) {
+        for (let p = 0; p < squadSize; p++) {
             const pool = activeAgents.filter(a => !usedInTeam.has(a.id));
             const picked = pickRandomNonRepeat(pool, 'team', 4);
             if (picked) {
@@ -553,7 +478,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 spinBtn.disabled = false;
                 soundManager.playWin();
 
-                teamGrid.innerHTML = team.map((agent, i) => `
+                const targetGrid = teamCardsGrid || teamGrid;
+                targetGrid.innerHTML = team.map((agent, i) => `
                     <div class="team-member-card">
                         <div class="team-player-label">PLAYER ${i + 1}</div>
                         <div class="team-agent-name" style="color: ${agent.color}">${agent.name}</div>
@@ -561,7 +487,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `).join('');
 
-                addToHistory({ name: `Squad: ${team.map(a => a.name).join(', ')}`, role: '5-Stack Team' });
+                addToHistory({ name: `Squad (${squadSize}): ${team.map(a => a.name).join(', ')}`, role: `${squadSize}-Player Stack` });
             }
         }, 100);
     }
@@ -635,26 +561,12 @@ document.addEventListener('DOMContentLoaded', () => {
             soundManager.playTick();
 
             // Toggle UI View Layouts
-            if (targetTab === 'loadout') {
+            if (targetTab === 'team') {
                 wheelStage.classList.add('hidden');
-                slotStage.classList.add('hidden');
-                loadoutGrid.classList.remove('hidden');
-                teamGrid.classList.add('hidden');
-            } else if (targetTab === 'team') {
-                wheelStage.classList.add('hidden');
-                slotStage.classList.add('hidden');
-                loadoutGrid.classList.add('hidden');
                 teamGrid.classList.remove('hidden');
             } else {
-                loadoutGrid.classList.add('hidden');
                 teamGrid.classList.add('hidden');
-                if (state.spinMode === 'wheel') {
-                    wheelStage.classList.remove('hidden');
-                    slotStage.classList.add('hidden');
-                } else {
-                    wheelStage.classList.add('hidden');
-                    slotStage.classList.remove('hidden');
-                }
+                wheelStage.classList.remove('hidden');
             }
 
             renderFilters();
@@ -663,9 +575,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     spinBtn.addEventListener('click', () => {
-        if (state.currentTab === 'loadout') {
-            spinLoadout();
-        } else if (state.currentTab === 'team') {
+        if (state.currentTab === 'team') {
             spinTeam();
         } else {
             spinWheel();
@@ -678,23 +588,6 @@ document.addEventListener('DOMContentLoaded', () => {
         soundToggleBtn.classList.toggle('active', state.soundEnabled);
     });
 
-    modeToggleBtn.addEventListener('click', () => {
-        if (state.isSpinning) return;
-        state.spinMode = state.spinMode === 'wheel' ? 'slot' : 'wheel';
-        modeToggleBtn.textContent = state.spinMode === 'wheel' ? '🎡 WHEEL MODE' : '🎰 SLOT REEL';
-
-        if (state.currentTab !== 'loadout' && state.currentTab !== 'team') {
-            if (state.spinMode === 'wheel') {
-                wheelStage.classList.remove('hidden');
-                slotStage.classList.add('hidden');
-                drawWheel();
-            } else {
-                wheelStage.classList.add('hidden');
-                slotStage.classList.remove('hidden');
-            }
-        }
-    });
-
     excludeBtn.addEventListener('click', openExcludeModal);
     modalClose.addEventListener('click', () => modalOverlay.classList.remove('active'));
     clearHistoryBtn.addEventListener('click', () => {
@@ -705,4 +598,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // INIT APP
     renderFilters();
     drawWheel();
+    renderDefaultTeamGrid();
 });

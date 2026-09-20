@@ -1,22 +1,23 @@
 /*
   VALORANT RANDOMISER - STYLESHEET
-  Theme: Valorant Tactical Dark UI with Crimson & Gold accents
+  Theme: Soothing Valorant Tactical Dark HUD UI with Crimson & Gold accents
 */
 
 :root {
   --color-bg-dark: #0F1923;
-  --color-bg-card: #17212B;
-  --color-bg-card-hover: #1F2C3A;
+  --color-bg-surface: #17212B;
+  --color-bg-card: #1B2733;
+  --color-bg-card-hover: #243242;
   --color-val-red: #FF4655;
   --color-val-red-hover: #E03544;
   --color-val-gold: #E2B659;
   --color-val-cyan: #36B5FF;
-  --color-val-purple: #9055FF;
+  --color-val-purple: #A066FF;
   --color-val-green: #46E6A3;
   --color-text-main: #ECE8E1;
-  --color-text-muted: #8B97A5;
-  --color-border: rgba(236, 232, 225, 0.15);
-  --color-border-glow: rgba(255, 70, 85, 0.4);
+  --color-text-muted: #94A2B2;
+  --color-border: rgba(236, 232, 225, 0.12);
+  --color-border-glow: rgba(255, 70, 85, 0.35);
 
   --font-display: 'Teko', sans-serif;
   --font-body: 'Rajdhani', sans-serif;
@@ -44,7 +45,7 @@ html, body {
   overflow-x: hidden;
 }
 
-/* Background Grid Pattern */
+/* Soothing Background Grid Pattern */
 body::before {
   content: '';
   position: fixed;
@@ -53,8 +54,8 @@ body::before {
   width: 100vw;
   height: 100vh;
   background-image:
-    linear-gradient(rgba(255, 70, 85, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 70, 85, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(255, 70, 85, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 70, 85, 0.025) 1px, transparent 1px);
   background-size: 40px 40px;
   pointer-events: none;
   z-index: 0;
@@ -63,12 +64,19 @@ body::before {
 .app-wrapper {
   position: relative;
   z-index: 1;
-  max-width: 1300px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 20px 24px 60px 24px;
+  padding: 20px 20px 60px 20px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
+}
+
+@media (max-width: 600px) {
+  .app-wrapper {
+    padding: 12px 12px 40px 12px;
+    gap: 16px;
+  }
 }
 
 /* --- HEADER HUD --- */
@@ -79,6 +87,7 @@ body::before {
   padding-bottom: 16px;
   border-bottom: 2px solid var(--color-border);
   position: relative;
+  gap: 14px;
 }
 
 .header-hud::after {
@@ -106,7 +115,8 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 15px rgba(255, 70, 85, 0.5);
+  box-shadow: 0 0 15px rgba(255, 70, 85, 0.4);
+  flex-shrink: 0;
 }
 
 .brand-logo-icon svg {
@@ -130,14 +140,15 @@ body::before {
   font-family: var(--font-mono);
   font-size: 0.8rem;
   color: var(--color-val-red);
-  letter-spacing: 3px;
+  letter-spacing: 2px;
   text-transform: uppercase;
 }
 
 .hud-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .hud-btn {
@@ -167,23 +178,53 @@ body::before {
   color: #FFF;
 }
 
+@media (max-width: 680px) {
+  .header-hud {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .hud-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .brand-title {
+    font-size: 2.2rem;
+  }
+  .brand-sub {
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+  }
+}
+
 /* --- TABS SYSTEM --- */
 .tab-navigation {
   display: flex;
   gap: 10px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
   border-bottom: 1px solid var(--color-border);
-  padding-bottom: 8px;
+  padding-bottom: 10px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.tab-navigation::-webkit-scrollbar {
+  height: 4px;
+}
+
+.tab-navigation::-webkit-scrollbar-thumb {
+  background: var(--color-val-red);
 }
 
 .nav-tab {
-  background: rgba(23, 33, 43, 0.6);
-  border: 1px solid transparent;
+  flex-shrink: 0;
+  background: rgba(23, 33, 43, 0.7);
+  border: 1px solid var(--color-border);
   color: var(--color-text-muted);
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   letter-spacing: 1.5px;
-  padding: 8px 24px;
+  padding: 8px 20px;
   clip-path: var(--clip-angle-btn);
   cursor: pointer;
   text-transform: uppercase;
@@ -196,7 +237,7 @@ body::before {
 .nav-tab:hover {
   color: var(--color-text-main);
   background: var(--color-bg-card);
-  border-color: var(--color-border);
+  border-color: rgba(236, 232, 225, 0.3);
 }
 
 .nav-tab.active {
@@ -210,8 +251,8 @@ body::before {
 .main-grid {
   display: grid;
   grid-template-columns: 1fr 340px;
-  gap: 24px;
-  min-height: 580px;
+  gap: 20px;
+  min-height: 540px;
 }
 
 @media (max-width: 992px) {
@@ -231,6 +272,13 @@ body::before {
   align-items: center;
   position: relative;
   box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+
+@media (max-width: 500px) {
+  .spinner-container-card {
+    padding: 16px 12px;
+  }
 }
 
 .filter-bar {
@@ -238,7 +286,7 @@ body::before {
   gap: 8px;
   flex-wrap: wrap;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   width: 100%;
 }
 
@@ -263,33 +311,26 @@ body::before {
 .filter-chip.active {
   border-color: var(--color-val-red);
   color: var(--color-val-red);
-  background: rgba(255, 70, 85, 0.1);
+  background: rgba(255, 70, 85, 0.12);
   font-weight: bold;
 }
 
 /* --- WHEEL & CANVAS --- */
 .wheel-stage {
   position: relative;
-  width: 440px;
-  height: 440px;
+  width: min(440px, 85vw);
+  height: min(440px, 85vw);
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 10px 0;
 }
 
-@media (max-width: 500px) {
-  .wheel-stage {
-    width: 320px;
-    height: 320px;
-  }
-}
-
 #wheelCanvas {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255, 70, 85, 0.2);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(255, 70, 85, 0.15);
 }
 
 .wheel-pointer {
@@ -313,8 +354,8 @@ body::before {
 
 .wheel-center-cap {
   position: absolute;
-  width: 70px;
-  height: 70px;
+  width: 66px;
+  height: 66px;
   background: var(--color-bg-dark);
   border: 3px solid var(--color-val-red);
   border-radius: 50%;
@@ -332,8 +373,8 @@ body::before {
 }
 
 .wheel-center-cap svg {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   fill: var(--color-val-red);
 }
 
@@ -341,7 +382,7 @@ body::before {
 .spin-controls {
   display: flex;
   gap: 16px;
-  margin-top: 24px;
+  margin-top: 20px;
   width: 100%;
   max-width: 440px;
 }
@@ -352,7 +393,7 @@ body::before {
   color: #FFF;
   border: none;
   font-family: var(--font-display);
-  font-size: 2.2rem;
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
   letter-spacing: 2px;
   padding: 12px 20px;
   clip-path: var(--clip-angle-btn);
@@ -550,6 +591,7 @@ body::before {
   align-items: center;
   font-family: var(--font-mono);
   font-size: 0.8rem;
+  gap: 8px;
 }
 
 .history-item-name {
@@ -560,6 +602,7 @@ body::before {
 .history-item-tag {
   color: var(--color-text-muted);
   font-size: 0.75rem;
+  flex-shrink: 0;
 }
 
 /* --- SLOT MACHINE / ROULETTE REEL ALTERNATIVE MODE --- */
@@ -567,7 +610,7 @@ body::before {
   width: 100%;
   max-width: 480px;
   height: 180px;
-  background: rgba(15, 25, 35, 0.9);
+  background: rgba(15, 25, 35, 0.95);
   border: 2px solid var(--color-val-red);
   clip-path: var(--clip-angle-md);
   position: relative;
@@ -575,15 +618,16 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 0 20px rgba(255, 70, 85, 0.2);
-  margin: 40px 0;
+  box-shadow: inset 0 0 35px rgba(0,0,0,0.85), 0 0 20px rgba(255, 70, 85, 0.25);
+  margin: 30px 0;
 }
 
 .slot-reel-strip {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: transform 0.1s linear;
+  width: 100%;
+  will-change: transform;
 }
 
 .slot-card {
@@ -594,23 +638,26 @@ body::before {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 20px;
+  padding: 16px;
   user-select: none;
+  text-align: center;
 }
 
 .slot-card-name {
   font-family: var(--font-display);
-  font-size: 3.2rem;
+  font-size: clamp(2rem, 7vw, 3.2rem);
   letter-spacing: 2px;
   text-transform: uppercase;
   color: #FFF;
+  line-height: 1;
 }
 
 .slot-card-role {
   font-family: var(--font-mono);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: var(--color-val-gold);
   text-transform: uppercase;
+  letter-spacing: 1.5px;
 }
 
 .slot-overlay-line {
@@ -620,66 +667,70 @@ body::before {
   width: 100%;
   height: 2px;
   background: var(--color-val-red);
-  box-shadow: 0 0 10px var(--color-val-red);
+  box-shadow: 0 0 12px var(--color-val-red);
   pointer-events: none;
-}
-
-/* --- LOADOUT RANDOMISER BUILDER --- */
-.loadout-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-  width: 100%;
-  margin-top: 10px;
-}
-
-.loadout-card {
-  background: rgba(15, 25, 35, 0.7);
-  border: 1px solid var(--color-border);
-  padding: 16px;
-  clip-path: var(--clip-angle-sm);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  position: relative;
-}
-
-.loadout-card-tag {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--color-val-red);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.loadout-card-title {
-  font-family: var(--font-display);
-  font-size: 2.2rem;
-  letter-spacing: 1px;
-  line-height: 0.9;
-  text-transform: uppercase;
-  color: #FFF;
-}
-
-.loadout-card-desc {
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  color: var(--color-text-muted);
+  z-index: 5;
 }
 
 /* --- TEAM BUILDER STACK --- */
-.team-stack-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 12px;
+.team-stack-container {
   width: 100%;
-  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-top: 10px;
 }
 
-@media (max-width: 768px) {
-  .team-stack-grid {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  }
+.squad-size-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  background: rgba(15, 25, 35, 0.6);
+  padding: 8px 16px;
+  border: 1px solid var(--color-border);
+  clip-path: var(--clip-angle-sm);
+}
+
+.squad-size-label {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  letter-spacing: 1px;
+}
+
+.squad-size-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-main);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  padding: 6px 14px;
+  clip-path: var(--clip-angle-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.squad-size-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--color-val-red);
+}
+
+.squad-size-btn.active {
+  background: var(--color-val-red);
+  color: #FFF;
+  border-color: var(--color-val-red);
+  font-weight: bold;
+  box-shadow: 0 0 12px rgba(255, 70, 85, 0.4);
+}
+
+.team-stack-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+  width: 100%;
 }
 
 .team-member-card {
@@ -742,7 +793,7 @@ body::before {
   background: var(--color-bg-card);
   border: 2px solid var(--color-val-red);
   clip-path: var(--clip-angle-md);
-  padding: 28px;
+  padding: 24px;
   max-width: 520px;
   width: 100%;
   box-shadow: 0 0 50px rgba(255, 70, 85, 0.4);

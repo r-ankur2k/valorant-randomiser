@@ -34,7 +34,6 @@
 
       <div class="hud-actions">
         <button id="soundToggle" class="hud-btn active">🔊 SFX ON</button>
-        <button id="modeToggle" class="hud-btn">🎡 WHEEL MODE</button>
         <button id="excludeBtn" class="hud-btn">⚙️ FILTER POOL</button>
       </div>
     </header>
@@ -50,11 +49,8 @@
       <button class="nav-tab" data-tab="challenges">
         <span>⚡</span> CHALLENGES
       </button>
-      <button class="nav-tab" data-tab="loadout">
-        <span>🎲</span> FULL LOADOUT
-      </button>
       <button class="nav-tab" data-tab="team">
-        <span>👥</span> 5-STACK SQUAD
+        <span>👥</span> SQUAD STACK
       </button>
     </nav>
 
@@ -80,69 +76,43 @@
           </div>
         </div>
 
-        <!-- SLOT REEL STAGE (Alternative View) -->
-        <div id="slotStage" class="slot-stage hidden">
-          <div class="slot-overlay-line"></div>
-          <div id="slotReel" class="slot-reel-strip">
-            <div class="slot-card">
-              <div class="slot-card-name">PRESS SPIN</div>
-              <div class="slot-card-role">SLOT ROULETTE</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- LOADOUT GRID STAGE -->
-        <div id="loadoutGrid" class="loadout-grid hidden">
-          <div class="loadout-card">
-            <div class="loadout-card-tag">AGENT</div>
-            <div class="loadout-card-title">READY</div>
-            <div class="loadout-card-desc">Click spin to generate loadout</div>
-          </div>
-          <div class="loadout-card">
-            <div class="loadout-card-tag">PRIMARY WEAPON</div>
-            <div class="loadout-card-title">READY</div>
-            <div class="loadout-card-desc">Click spin to generate loadout</div>
-          </div>
-          <div class="loadout-card">
-            <div class="loadout-card-tag">SIDEARM</div>
-            <div class="loadout-card-title">READY</div>
-            <div class="loadout-card-desc">Click spin to generate loadout</div>
-          </div>
-          <div class="loadout-card">
-            <div class="loadout-card-tag text-gold">SHIELD / ARMOR</div>
-            <div class="loadout-card-title text-gold">READY</div>
-            <div class="loadout-card-desc">Click spin to generate loadout</div>
-          </div>
-        </div>
-
         <!-- TEAM GRID STAGE -->
-        <div id="teamGrid" class="team-stack-grid hidden">
-          <div class="team-member-card">
-            <div class="team-player-label">PLAYER 1</div>
-            <div class="team-agent-name">???</div>
+        <div id="teamGrid" class="team-stack-container hidden">
+          <div class="squad-size-selector">
+            <span class="squad-size-label">SQUAD SIZE:</span>
+            <button class="squad-size-btn" data-size="2">2 (DUO)</button>
+            <button class="squad-size-btn" data-size="3">3 (TRIO)</button>
+            <button class="squad-size-btn" data-size="4">4 (QUAD)</button>
+            <button class="squad-size-btn active" data-size="5">5 (FULL)</button>
           </div>
-          <div class="team-member-card">
-            <div class="team-player-label">PLAYER 2</div>
-            <div class="team-agent-name">???</div>
-          </div>
-          <div class="team-member-card">
-            <div class="team-player-label">PLAYER 3</div>
-            <div class="team-agent-name">???</div>
-          </div>
-          <div class="team-member-card">
-            <div class="team-player-label">PLAYER 4</div>
-            <div class="team-agent-name">???</div>
-          </div>
-          <div class="team-member-card">
-            <div class="team-player-label">PLAYER 5</div>
-            <div class="team-agent-name">???</div>
+          <div id="teamCardsGrid" class="team-stack-grid">
+            <div class="team-member-card">
+              <div class="team-player-label">PLAYER 1</div>
+              <div class="team-agent-name">???</div>
+            </div>
+            <div class="team-member-card">
+              <div class="team-player-label">PLAYER 2</div>
+              <div class="team-agent-name">???</div>
+            </div>
+            <div class="team-member-card">
+              <div class="team-player-label">PLAYER 3</div>
+              <div class="team-agent-name">???</div>
+            </div>
+            <div class="team-member-card">
+              <div class="team-player-label">PLAYER 4</div>
+              <div class="team-agent-name">???</div>
+            </div>
+            <div class="team-member-card">
+              <div class="team-player-label">PLAYER 5</div>
+              <div class="team-agent-name">???</div>
+            </div>
           </div>
         </div>
 
         <!-- ACTION BUTTONS -->
         <div class="spin-controls">
           <button id="spinBtn" class="btn-spin-main">
-            <span>⚡ SPIN SELECTION</span>
+            <span>⚡ SPIN</span>
           </button>
         </div>
 
