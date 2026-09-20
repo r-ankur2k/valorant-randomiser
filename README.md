@@ -4,7 +4,7 @@ A tactical Web Application for Valorant players featuring interactive Canvas Spi
 
 ## 🚀 Features
 
-- **🎯 Agent Spin**: Wheel of Fortune with all 24+ Valorant Agents (Jett, Reyna, Clove, Iso, Fade, Vyse, etc.). Filterable by Role (Duelist, Initiator, Controller, Sentinel).
+- **🎯 Agent Spin**: Wheel of Fortune with all 27+ Valorant Agents (Jett, Reyna, Clove, Iso, Fade, Vyse, Tejo, Miks, Waylay, Veto, etc.). Filterable by Role (Duelist, Initiator, Controller, Sentinel).
 - **🔫 Weapon Spin**: Wheel of Fortune with all Valorant guns and melee. Filterable by Category (Sidearms, SMGs, Shotguns, Rifles, Snipers, Heavy, Melee) or Price Range.
 - **⚡ Tactical Challenges**: Spin for fun and handicap challenges (e.g. *Glass Cannon*, *Eco King*, *One Tap Only*, *Sheriff Only*, *No Armor Run*).
 - **👥 Squad Stack Randomizer**: Custom squad sizing selector (2 to 5 players: Duo, Trio, Quad, or Full Stack) that generates agent picks with role badges.

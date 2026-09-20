@@ -108,40 +108,69 @@ body::before {
 }
 
 .brand-logo-icon {
-  width: 44px;
-  height: 44px;
+  width: 54px;
+  height: 54px;
   background-color: var(--color-val-red);
   clip-path: var(--clip-angle-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 15px rgba(255, 70, 85, 0.4);
+  box-shadow: 0 0 18px rgba(255, 70, 85, 0.5);
   flex-shrink: 0;
 }
 
+.brand-logo-icon img,
 .brand-logo-icon svg {
-  width: 28px;
-  height: 28px;
-  fill: #FFF;
+  width: 82%;
+  height: 82%;
+  object-fit: contain;
 }
 
 .brand-title {
   font-family: var(--font-display);
-  font-size: 2.8rem;
+  font-size: 2.2rem;
   font-weight: 700;
-  letter-spacing: 2px;
-  line-height: 0.9;
+  letter-spacing: 1.5px;
+  line-height: 1;
   text-transform: uppercase;
   color: #FFF;
-  text-shadow: 0 0 15px rgba(255, 70, 85, 0.3);
 }
 
 .brand-sub {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--color-val-red);
-  letter-spacing: 2px;
-  text-transform: uppercase;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  letter-spacing: 1px;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.author-name {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #FFF;
+  letter-spacing: 0.5px;
+}
+
+.author-link {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-val-gold);
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.author-link:hover {
+  color: #FFF;
+  text-shadow: 0 0 10px rgba(226, 182, 89, 0.8);
+  text-decoration: underline;
 }
 
 .hud-actions {
@@ -191,8 +220,8 @@ body::before {
     font-size: 2.2rem;
   }
   .brand-sub {
-    font-size: 0.7rem;
-    letter-spacing: 1px;
+    font-size: 0.85rem;
+    letter-spacing: 0.8px;
   }
 }
 
@@ -716,6 +745,18 @@ body::before {
 .squad-size-btn:hover {
   background: rgba(255, 255, 255, 0.12);
   border-color: var(--color-val-red);
+}
+
+/* --- APP FOOTER --- */
+.app-footer {
+  margin-top: 24px;
+  padding: 16px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  letter-spacing: 1px;
 }
 
 .squad-size-btn.active {

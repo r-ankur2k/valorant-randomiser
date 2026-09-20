@@ -5,7 +5,7 @@
 ## 📋 Overview of What Has Been Done
 
 ### 1. 🎯 Core Randomiser Features
-- **Agent Randomiser**: Complete database of all Valorant Agents (Jett, Reyna, Clove, Iso, Fade, Vyse, etc.) filterable by Role (*Duelist, Initiator, Controller, Sentinel*).
+- **Agent Randomiser**: Complete database of all 27+ Valorant Agents (Jett, Reyna, Clove, Iso, Fade, Vyse, Tejo, Miks, Waylay, Veto, etc.) filterable by Role (*Duelist, Initiator, Controller, Sentinel*).
 - **Weapon Randomiser**: All guns & melee weapon options, filterable by Category (*Sidearms, SMGs, Shotguns, Rifles, Snipers, Heavy, Melee*).
 - **Tactical Challenges**: 15 simple, engaging, and realistic strat roulettes (*e.g., Sheriff Only, Shotgun Party, Ghost Protocol, Protect the VIP, Buddy System, Full Site Rush, Scavenger*).
 - **Squad Stack Generator**: Flexible 2-5 player team randomizer (Duo, Trio, Quad, or Full 5-Stack) with dynamic player card slots and assigned roles.
@@ -22,6 +22,7 @@
 ---
 
 ## 🎨 UI & UX Polish
+- **Agent & Weapon Visual Assets**: High-resolution official Valorant API display icons and head portraits integrated across Result Reveal cards, Squad Stack player cards, and Spin History.
 - **Single Canvas Wheel Engine**: Streamlined layout featuring 4 core tabs (*Agent Spin, Weapon Spin, Challenges, Squad Stack*) driven entirely by the responsive Canvas Spin Wheel.
 - **Dynamic Squad Size Selector**: Instant switching between 2 (Duo), 3 (Trio), 4 (Quad), and 5 (Full) player squad stack modes.
 - **Full Mobile Responsiveness**:

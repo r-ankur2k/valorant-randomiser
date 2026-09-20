@@ -208,6 +208,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- HELPER: CONTRAST COLOR SELECTOR ---
+    function getContrastColor(hexColor) {
+        if (!hexColor || hexColor.charAt(0) !== '#') return '#ECE8E1';
+        let hex = hexColor.substring(1);
+        if (hex.length === 3) {
+            hex = hex.split('').map(c => c + c).join('');
+        }
+        if (hex.length !== 6) return '#ECE8E1';
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+        const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+        return (yiq >= 165) ? '#0F1923' : '#ECE8E1';
+    }
+
     // --- CANVAS WHEEL DRAWING ---
     function drawWheel() {
         if (!ctx || !canvas) return;
@@ -234,6 +249,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const sliceAngle = (2 * Math.PI) / items.length;
+        const fontSize = Math.max(11, Math.min(20, Math.floor(360 / items.length)));
+        const maxTextWidth = radius * 0.52;
 
         items.forEach((item, index) => {
             const startAngle = state.wheelAngle + index * sliceAngle;
@@ -249,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.fillStyle = sliceColor;
             ctx.fill();
             ctx.strokeStyle = 'rgba(15, 25, 35, 0.8)';
-            ctx.lineWidth = 3;
+            ctx.lineWidth = 2.5;
             ctx.stroke();
 
             // Text Label
@@ -257,11 +274,13 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.translate(centerX, centerY);
             ctx.rotate(startAngle + sliceAngle / 2);
             ctx.textAlign = 'right';
-            ctx.fillStyle = '#ECE8E1';
-            ctx.font = 'bold 18px "Teko"';
-            ctx.shadowColor = 'rgba(0,0,0,0.8)';
-            ctx.shadowBlur = 4;
-            ctx.fillText(item.name.toUpperCase(), radius - 20, 6);
+
+            const textColor = getContrastColor(sliceColor);
+            ctx.fillStyle = textColor;
+            ctx.font = `bold ${fontSize}px "Teko"`;
+            ctx.shadowColor = textColor === '#0F1923' ? 'transparent' : 'rgba(0,0,0,0.85)';
+            ctx.shadowBlur = 3;
+            ctx.fillText(item.name.toUpperCase(), radius - 15, fontSize * 0.35, maxTextWidth);
             ctx.restore();
         });
 
@@ -365,7 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (state.currentTab === 'agents') {
             html = `
                 <div class="result-badge" style="border-color: ${item.color}">
-                    <div style="font-family: var(--font-display); font-size: 2.2rem; color: ${item.color}">${item.name[0]}</div>
+                    ${item.icon ? `<img src="${item.icon}" alt="${item.name}" style="width: 85%; height: 85%; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));">` : `<div style="font-family: var(--font-display); font-size: 2.2rem; color: ${item.color}">${item.name[0]}</div>`}
                 </div>
                 <div class="result-title">${item.name}</div>
                 <div class="result-subtitle" style="color: ${item.color}">${item.role} • ${item.origin}</div>
@@ -384,7 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (state.currentTab === 'weapons') {
             html = `
                 <div class="result-badge" style="border-color: ${item.color}">
-                    <div style="font-family: var(--font-display); font-size: 1.8rem; color: ${item.color}">$${item.cost}</div>
+                    ${item.icon ? `<img src="${item.icon}" alt="${item.name}" style="width: 90%; height: 90%; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));">` : `<div style="font-family: var(--font-display); font-size: 1.8rem; color: ${item.color}">$${item.cost}</div>`}
                 </div>
                 <div class="result-title">${item.name}</div>
                 <div class="result-subtitle" style="color: ${item.color}">${item.category} • COST: ${item.cost} CREDITS</div>
@@ -482,6 +501,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 targetGrid.innerHTML = team.map((agent, i) => `
                     <div class="team-member-card">
                         <div class="team-player-label">PLAYER ${i + 1}</div>
+                        ${agent.icon ? `<img src="${agent.icon}" alt="${agent.name}" style="width: 48px; height: 48px; object-fit: contain; margin: 4px 0;">` : ''}
                         <div class="team-agent-name" style="color: ${agent.color}">${agent.name}</div>
                         <div class="team-agent-role">${agent.role}</div>
                     </div>
@@ -502,8 +522,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderHistory() {
         if (!historyList) return;
         historyList.innerHTML = state.history.map(item => `
-            <div class="history-item">
-                <span class="history-item-name">${item.name}</span>
+            <div class="history-item" style="display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    ${item.icon ? `<img src="${item.icon}" alt="" style="width: 22px; height: 22px; object-fit: contain;">` : ''}
+                    <span class="history-item-name">${item.name}</span>
+                </div>
                 <span class="history-item-tag">${item.role || item.category || item.type || ''}</span>
             </div>
         `).join('');
